@@ -28,6 +28,7 @@ class State(TypedDict):
 
 ## END DEFINE CLASS OBJECT
 
+## BEGIN DEFINE FUNCTIONS
 ## BEGIN DEFINE FUNCTION
 def Chatbot(state: State):
 
@@ -39,12 +40,20 @@ def Chatbot(state: State):
 
 ## END DEFINE FUNCTION
 
-## BEGIN MAIN PROGRAM
+## BEGIN DEFINE FUNCTION
+def StreamGraphUpdates(user_input: str):
+    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]}):
+        for value in event.values():
+            print("Assistant:", value["messages"][-1].content)
 
+## END DEFINE FUNCTION
+## END DEFINE FUNCTIONS
+
+## BEGIN MAIN PROGRAM
 ## CALL CLASS OBJECT
 GraphBuilder = StateGraph(State)
 
-## CALL CLAUDE: OH, CLAUDE! DO MY BIDDING, S'IL VOUS PLAIT
+## CALL CLAUDE: OH, CLAUDE! COME HITHER, S'IL VOUS PLAIT
 llm = ChatAnthropic(api_key=API_KEY_ANTHROPIC, model=MODEL)
 
 ## CALL FUNCTION
@@ -53,18 +62,6 @@ GraphBuilder.add_edge(START, "chatbot")
 GraphBuilder.add_edge("chatbot", END)
 graph = GraphBuilder.compile()
 
-## BEGIN DEFINE FUNCTION
-def StreamGraphUpdates(user_input: str):
-    for event in graph.stream({"messages": [{"role": "user", "content": user_input}]}):
-        for value in event.values():
-            print("Assistant:", value["messages"][-1].content)
-
-## END DEFINE FUNCTION
-
-## END MAIN PROGRAM
-## GAME OVER
-
-"""
 ## BEGIN WHILE LOOP
 while True:
     try:
@@ -80,14 +77,6 @@ while True:
         StreamGraphUpdates(user_input)
         break
 ## END WHILE LOOP
-"""
 
-## BEGIN DISPLAY IMAGE
-try:
-    pass ## display(Image(graph.get_graph().draw_mermaid_png())) # This requires some extra dependencies and is optional
-
-except Exception:
-    # This requires some extra dependencies and is optional
-    pass
-
-## END DISPLAY IMAGE
+## END MAIN PROGRAM
+## GAME OVER
